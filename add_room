@@ -18,6 +18,8 @@
 #include <vector>
 #include "SOIL/stb_image_aug.h"
 
+
+
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 namespace texture {
@@ -203,6 +205,12 @@ void renderScene(GLFWwindow* window)
 		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()),
 		texture::ship, texture::shipNormal
 	);
+	drawObjectTexture(models::roomContext,
+		glm::translate(spaceshipPos),
+		texture::ship, texture::shipNormal
+	);
+
+
 
 	glUseProgram(0);
 	glfwSwapBuffers(window);
