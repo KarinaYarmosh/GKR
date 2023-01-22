@@ -73,7 +73,6 @@ vec3 PBR(vec3 lightDir, vec3 lightColor, vec3 normal, vec3 viewDir, vec3 color){
 
 vec3 phongLight(vec3 lightDir, vec3 lightColor, vec3 normal,vec3 viewDir){
 	float diffuse=max(0,dot(normal,lightDir));
-
 	vec3 R = reflect(-lightDir, normal);  
 
 	float specular = pow(max(dot(viewDir, R), 0.0), 32);
