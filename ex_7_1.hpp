@@ -28,7 +28,7 @@ namespace texture {
 	GLuint shipNormal;
 }
 
-GLuint cubemapTexture ;
+GLuint cubemapTexture;
 
 
 GLuint program;
@@ -40,6 +40,8 @@ GLuint programSkyBox;
 Core::Shader_Loader shaderLoader;
 
 Core::RenderContext shipContext;
+Core::RenderContext roomContext;
+Core::RenderContext windowContext;
 Core::RenderContext sphereContext;
 Core::RenderContext cubeContext;
 
@@ -128,7 +130,7 @@ void drawObjectTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLui
 }
 
 
-GLuint loadCubemap(std::vector<std::string> faces){
+GLuint loadCubemap(std::vector<std::string> faces) {
 	GLuint textureID;
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -161,10 +163,10 @@ GLuint loadCubemap(std::vector<std::string> faces){
 
 void drawSkyBox(Core::RenderContext& context, glm::mat4 modelMatrix) {
 
-	cubemapTexture = loadCubemap(faces);
 	glUseProgram(programSkyBox);
+
 	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
-	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
+	glm::mat4 transformation = viewProjectionMatrix * glm::translate(cameraPos);
 	glUniformMatrix4fv(glGetUniformLocation(programSkyBox, "transformation"), 1, GL_FALSE, (float*)&transformation);
 
 	Core::SetActiveTexture(cubemapTexture, "skybox", programSkyBox, 0);
@@ -180,6 +182,8 @@ void renderScene(GLFWwindow* window)
 	float time = glfwGetTime();
 
 	drawSkyBox(cubeContext, glm::mat4());
+	//zostavic tric
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
@@ -192,6 +196,15 @@ void renderScene(GLFWwindow* window)
 
 	drawObjectTexture(shipContext,
 		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()),
+		texture::ship, texture::shipNormal
+	);
+	//zamiast tego statku trzeba dodac pokuj
+	drawObjectTexture(roomContext,
+		glm::mat4(),
+		texture::ship, texture::shipNormal
+	);
+	drawObjectTexture(windowContext,
+		glm::mat4(),
 		texture::ship, texture::shipNormal
 	);
 
@@ -227,10 +240,13 @@ void init(GLFWwindow* window)
 
 	loadModelToContext("./models/spaceship.obj", shipContext);
 	loadModelToContext("./models/cube.obj", cubeContext);
+	loadModelToContext("./models/room.obj", roomContext);
+	loadModelToContext("./models/window.obj", windowContext);
 
 	texture::ship = Core::LoadTexture("textures/spaceship.jpg");
 
 	texture::shipNormal = Core::LoadTexture("textures/spaceship_normal.jpg");
+	cubemapTexture = loadCubemap(faces);
 
 }
 
