@@ -10,4 +10,6 @@ void main()
 {
 	texCoord = vertexPosition;
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
+	//
+	//gl_Position = pos.xyww*vec4(1,1,0.99999,1);
 }
